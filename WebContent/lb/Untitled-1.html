@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="jquery-3.4.1.min.js"></script>
+<script src="jcanvas.js"></script>
+<script src="base.js"></script>
+<style>
+body {
+  text-align: center;
+}
+
+canvas {
+  margin: auto;
+  display: block;
+}
+</style>
+</head>
+
+<body>
+<h2>绿波工具</h2>
+<!--<div style="border:solid;border-color:#CCC">-->
+<div>
+	<canvas id="myCanvas" width="6000" height="480"></canvas>
+</div>
+<div style="text-align:left">    
+    <label>绿波带</label> 
+    <label>车速</label> <input type="text">
+    <label>上移</label> <input type="text">
+    <label>下移</label> <input type="text">
+    <br>
+    <label>绿波周期</label> <input type="text">
+    <br>
+    <label>路口1</label> 
+    <label>长度</label> <input type="text">
+    <label>绿波时长</label> <input type="text">
+    <label>相位差</label> <input type="text">
+    <br>
+    <label>路口2</label> 
+    <label>长度</label> <input type="text">
+    <label>绿波时长</label> <input type="text">
+    <label>相位差</label> <input type="text">
+    <br>
+    <label>路口3</label> 
+    <label>长度</label> <input type="text">
+    <label>绿波时长</label> <input type="text">
+    <label>相位差</label> <input type="text">
+</div>
+
+<script>
+// Store the canvas object into a variable
+var $myCanvas = $('#myCanvas');
+
+
+
+/////////////固定不需要做改动///////////////
+///////////创建X轴/////////
+var x_value=220;//x轴刻度
+var x_len=x_value*2;
+xCreate(x_len);
+/////////创建Y轴///////////
+var y_value=4400;//y轴刻度
+var y_len=40+(y_value/2);
+yCreate(x_len,y_len);
+/////////////固定不需要做改动///////////////
+
+// x_len 时间
+//y_len 米
+
+
+
+//地图距离
+//var road_loc1=80+(len1/2);
+//车速 50（米/秒）
+//var speed=50*1000/3600;
+//路口时间
+//var time1=(1200*2)/speed;
+
+//路段长度
+var roadLen=0;
+//绿波周期
+var cycle=30;
+//绿波时长
+var lv_cycle1=10;
+//创建路口1
+//X轴长度,路口位置,总周期,绿波时长,相位差
+createLoc(x_len,roadLen,cycle,lv_cycle1,0);
+
+//绿波时长2
+var lv_cycle2=20;
+//距离
+roadLen=800;
+//创建路口2
+createLoc(x_len,roadLen,cycle,lv_cycle2,25);
+
+//创建路口3
+roadLen=800+400;
+var lv_cycle3=20;
+var xwc=45;
+createLoc(x_len,roadLen,cycle,lv_cycle3,xwc);
+
+
+//创建绿波带
+//总距离(米)
+//车速km/h
+var speed=80
+createGreen(lv_cycle1,0,0,cycle,roadLen,speed);
+//创建绿波带
+
+
+
+//创建反向绿波带
+//绿波时长，路口距离，绿波周期
+function createLv_R(lv_cycle,upAdd,sum_c,lenEnd,speed,xwc){
+	var time=(lenEnd*2)/(speed*1000/3600);
+	for(var i=0;i<lv_cycle*2;i++){
+		$('canvas').drawLine({
+			strokeStyle:'#7CFC00',
+			strokeWidth:1,
+			x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd-xwc*2,
+			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd-xwc*2
+		});
+	}
+}
+//绿波周期，向上偏移量，向下偏移量，周期，总路程，车速
+function createGreen_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){	
+	for(var i=0;i<y_len/sum_c;i++){
+	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
+		createLv_R(lv_cycle-downSub,upAdd,sum_c*i,lenEnd,speed,xwc);	
+	
+	}
+}
+// 创建反向绿波带
+// lv_cycle3最后一个路口绿波宽度,cycle总周期,xwc最后一个路口
+createGreen_R(lv_cycle3,0,0,cycle,roadLen,speed,xwc);
+
+//for(var i=0;i<lv_cycle*2;i++){
+//	$('canvas').drawLine({
+//		strokeStyle:'GREEN',
+//		strokeWidth:1,
+//		x1:80,y1:x_len-i,
+//		x2:road_loc1,y2:x_len-time1-i
+//	});
+//}
+
+
+/*$('canvas').drawText({
+	  //fillStyle: 'gray',
+	  strokeStyle: 'gray',
+	  strokeWidth: 1,
+	  x: 300, y: 200,
+	  fontSize: 12,
+	  //fontFamily: 'Verdana, sans-serif',
+	  //两个像素为1秒
+	  text: time1
+	});*/
+	
+
+
+/*$('canvas').drawVector({
+  strokeStyle: '#000',
+  strokeWidth: 4,
+  x: 40, y: 400,
+  a1: 0, l1: 200
+});*/
+//////////////////////////////绿波轴///////////////////////////////////
+/*STEP 3 变量*/
+//路口A位置 80 为0起始
+//var road_len=0;
+//var road_loc=80+(road_len/2);
+///*STEP 3 变量*/
+//
+//$myCanvas.drawLine({
+//	strokeStyle:'RED',
+//	strokeWidth:1,
+//	x1:road_loc,y1:0,
+//	x2:road_loc,y2:x_len
+//});
+//
+///*STEP 4 变量*/
+////周期(秒)
+//var sum_c=40;
+////绿波时长(秒)
+//var green_len=20;
+////相位差
+//var xwc=0;
+///*STEP 4 变量*/
+//
+//var cycle=x_len/(sum_c*2);
+////var region=(50*2)-40;//非绿波时间
+//var r_y1=x_len-(green_len*2);//2为固定值
+//var r_y2=x_len;
+//for(var i=0;i<cycle;i++){
+//	$myCanvas.drawLine({
+//		strokeStyle:'GREEN',
+//		strokeWidth:10,
+//		x1:road_loc,y1:r_y1-(sum_c*2)*i-xwc,
+//		x2:road_loc,y2:r_y2-(sum_c*2)*i-xwc
+//	});
+//}
+//////////////////////////////绿波轴///////////////////////////////////
+
+
+//////////////////////////////绿波轴///////////////////////////////////
+/*STEP 3 变量*/
+//路口A位置 80 为0起始
+//var road_len=800;
+//var road_loc=80+(road_len/2);
+///*STEP 3 变量*/
+//
+//$myCanvas.drawLine({
+//	strokeStyle:'RED',
+//	strokeWidth:1,
+//	x1:road_loc,y1:0,
+//	x2:road_loc,y2:x_len
+//});
+//
+///*STEP 4 变量*/
+////周期(秒)
+//var sum_c=40;
+////绿波时长(秒)
+//var green_len=30;
+////相位差
+//var xwc=40;
+///*STEP 4 变量*/
+//
+//var cycle=x_len/(sum_c*2);
+////var region=(50*2)-40;//非绿波时间
+//var r_y1=x_len-(green_len*2);//2为固定值
+//var r_y2=x_len;
+//for(var i=0;i<cycle;i++){
+//	$myCanvas.drawLine({
+//		strokeStyle:'GREEN',
+//		strokeWidth:10,
+//		x1:road_loc,y1:r_y1-(sum_c*2)*i-xwc,
+//		x2:road_loc,y2:r_y2-(sum_c*2)*i-xwc
+//	});
+//}
+//////////////////////////////绿波轴///////////////////////////////////
+</script>
+</body>
+</html>
