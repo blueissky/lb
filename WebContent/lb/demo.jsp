@@ -52,7 +52,6 @@ canvas {
     <button onclick="showR()" type="button" class="layui-btn">反向相位差</button>
     <button onclick="autoZ()" type="button" class="layui-btn">正向绿波协调</button>
     <button onclick="autoR()" type="button" class="layui-btn">反向绿波协调</button>
-    
     <br><br>
     <div style="height: 0px;width: 100%;border: 1px;border-color: gray;border-style: solid;"></div>
     <br><br>
@@ -388,9 +387,9 @@ function autoR(){
 		}
 	}
 	
-	//console.log(arry1);
-	//console.log(arry2);
-	//console.log(arry3);
+	console.log(arry1);
+	console.log(arry2);
+	console.log(arry3);
 	
 	//直线方程 x=ay+b y=x/a+b 
 	//画图
@@ -446,6 +445,16 @@ function autoR(){
 			}
 		}
 	}
+	
+	console.log("*****");
+	console.log(xwc);
+	console.log(xwc1);
+	console.log(tempArry2);
+	console.log(tempArry3_2);
+	console.log(tempArry1);
+	console.log(tempArry3);
+	console.log("*****");
+	
 	var tempAllF=new Array();
 	var tempAll=new Array();
 	//只保留一个
@@ -457,6 +466,8 @@ function autoR(){
 			}
 		}
 	}
+	console.log(arry3);
+	console.log(tempArry3);
 	//画图 ALL
 	for(var i=0;i<tempAll.length;i++){
 		$myCanvas.drawLine({
