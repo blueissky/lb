@@ -2,13 +2,13 @@
 function roadName(name,locX){
 	$myCanvas.drawText({
 	  fillStyle: 'black',
-	  //strokeStyle: 'Green',
+	  strokeStyle: '#CD950C',
 	  //strokeWidth: 1,
 	  //x: 200, y:x_len+60,
 	  x: locX, y:x_len+40,
 	  fontSize: 15,
-	  //fontFamily: 'Verdana, sans-serif',
-	  text: name
+	  //fontFamily: 'Georgia, serif',
+	  text: "路口"+name
 	});
 }
 /////////////创建文本///////////////
