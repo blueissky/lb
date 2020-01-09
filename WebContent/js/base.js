@@ -130,23 +130,23 @@ function xwc_sl(lenEnd,speed){
 
 ////////////////////////创建正向绿波带////////////////////////
 //绿波带宽度（小）		  绿波时长,   上偏移量,绿波周期,路口距离，绿波周期
-function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed){
+function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){
 	var time=(lenEnd*2)/(speed*1000/3600);
 	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
 	for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){
 		$('canvas').drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
-			x1:80,y1:x_len-(sum_c*2)-i-upAdd*2,
-			x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2
+			x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
+			x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,
 		});
 	}
 }
 //绿波带条数(大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
-function createGreen(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed){	
+function createGreen(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){	
 	for(var i=0;i<y_len/sum_c;i++){
 	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
-		createLv(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed);	
+		createLv(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc);	
 	
 	}
 }

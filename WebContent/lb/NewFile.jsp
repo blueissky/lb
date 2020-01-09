@@ -48,11 +48,12 @@ body {
     <label>车速</label> <input type="text" value="45" id="common_speed_r">
     <label>绿波带宽</label> <input type="text" value="0" id="common_width_r">
     <br><br>
-    <button onclick="show()" type="button" class="layui-btn">生成</button>
+    <button onclick="show1()" type="button" class="layui-btn">正向生成</button>
+    <button onclick="show2()" type="button" class="layui-btn">反向生成</button>
     <button onclick="showZ()" type="button" class="layui-btn">正向相位差</button>
     <button onclick="showR()" type="button" class="layui-btn">反向相位差</button>
     <button onclick="autoZ()" type="button" class="layui-btn">正向绿波协调</button>
-    <button onclick="autoR()" type="button" class="layui-btn">反向绿波协调</button>
+    <button onclick="autoR2()" type="button" class="layui-btn">反向绿波协调</button>
     <button onclick="clearPanel()" type="button" class="layui-btn">清除</button>
     <br><br>
     <div style="height: 0px;width: 100%;border: 1px;border-color: gray;border-style: solid;"></div>
@@ -93,6 +94,19 @@ var y_value=4400;//y轴刻度
 var y_len=40+(y_value/2);
 yCreate(x_len,y_len);
 /////////////固定不需要做改动///////////////
+
+
+$myCanvas.drawText({
+	  fillStyle: 'black',
+	  //strokeStyle: 'Green',
+	  //strokeWidth: 1,
+	  //x: 200, y:x_len+60,
+	  x: 40, y:x_len+20,
+	  fontSize: 15,
+	  //fontFamily: 'Verdana, sans-serif',
+	  text: "s/m"
+	});
+
 ////////////////////////清除画布(白色替换)//////////////////////
 function clearPanel(){
 	//清除路段
@@ -108,7 +122,8 @@ function clearPanel(){
 }
 
 ////////////////////////1距离,2绿波带宽,3相位差//////////////////////
-function show(){
+//正向
+function show1(){
 	var common_speed=$("#common_speed").val();
 	var common_cycle=$("#common_cycle").val();
 	//反向使用
@@ -132,8 +147,35 @@ function show(){
 		createLoc(x_len,roadLen,common_cycle,r2,r3);//创建绿信
 		roadName(i,roadLen/2+80);//创建道路名称
 	}
+	var r3=$("#road_1_3").val();
 	//创建正向绿波带
-	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val());
+	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val(),r3);
+}
+//反向
+function show2(){
+	var common_speed=$("#common_speed").val();
+	var common_cycle=$("#common_cycle").val();
+	//反向使用
+	var last2=0;
+	var last3=0;
+	//路段长度
+	var roadLen=0;
+	for(var i=1;i<=20;i++){
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			break;
+		}else{
+			last2=r2;
+			last3=r3;
+		}
+		roadLen+=parseInt(r1);
+		//console.log(roadLen);
+		createLoc(x_len,roadLen,common_cycle,r2,r3);//创建绿信
+		roadName(i,roadLen/2+80);//创建道路名称
+	}
 	//创建反向绿波带
 	createGreen_R(last2,parseInt($("#common_up_r").val()),parseInt($("#common_down_r").val()),common_cycle,roadLen,$("#common_speed_r").val(),last3);	
 }
@@ -173,9 +215,9 @@ function showZ(){
 		createLoc(x_len,roadLen,common_cycle,r2,r3);//创建绿信
 		roadName(i,roadLen/2+80);//创建道路名称
 	}
-	
+	var r3=$("#road_1_3").val();
 	//创建正向绿波带
-	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val());
+	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val(),r3);
 }
 ////////////////////////反向绿波相位差//////////////////////
 //1距离,2绿波带宽,3相位差
@@ -292,8 +334,9 @@ function autoZ(){
 	if(tempUp<0)tempUp=0;
 	console.log("temp:"+tempUp);
 	
+	var r3=$("#road_1_3").val();
 	//创建正向绿波带
-	createGreen($("#road_1_2").val(),tempUp,parseInt($("#road_1_2").val())-tempDown,common_cycle,roadLen,common_speed);
+	createGreen($("#road_1_2").val(),tempUp,parseInt($("#road_1_2").val())-tempDown,common_cycle,roadLen,common_speed,0);
 	$("#common_up").val(tempUp);
 	$("#common_down").val(parseInt($("#road_1_2").val())-tempDown);
 	
@@ -303,14 +346,14 @@ function autoZ(){
 	var common_width=$("#common_width").val(parseInt($("#road_1_2").val())-u-d);
 }
 
-//反向自动计算
+//反向绿波带计算 非自动计算相位差
 //1距离,2绿波带宽,3相位差
-function autoR(){
+function autoR2(){
 	var allArry=new Array();//每个路口绿波点集合
 	var xwcArry=new Array();//路口相位差集合，倒序
 	var common_speed_r=$("#common_speed_r").val();
 	var common_cycle=$("#common_cycle").val();
-	/////////////////////////////////////////自动计算相位差///////////////////////////////////////////
+	/////////////////////////////////////////自动计算相位差////////																			STEP1
 	//路段长度
 	var roadLen=0;
 	for(var i=20;i>=1;i--){
@@ -321,16 +364,22 @@ function autoR(){
 			//console.log("结束："+i);
 			continue;
 		}
+		//var xwc=xwc_sl(roadLen,common_speed_r);//路口1,2
+		//$("#road_"+i+"_3").val(Math.round(xwc));
+		/* roadLen+=parseInt(r1);
+		xwc=parseInt(r3);		
+		xwc=Math.round(xwc*2);
+		xwcArry.push(xwc); */
+		
 		var xwc=xwc_sl(roadLen,common_speed_r);//路口1,2
-		$("#road_"+i+"_3").val(Math.round(xwc));
+		//$("#road_"+i+"_3").val(Math.round(xwc));
 		roadLen+=parseInt(r1);
-				
 		xwc=Math.round(xwc*2);
 		xwcArry.push(xwc);
 	}
 	
-	/////////////////////////////////////////自动计算相位差///////////////////////////////////////////
-	//////////////////////////创建路口////////////////////////////
+	/////////////////////////////////////////自动计算相位差////////
+	//////////////////////////创建路口////////////////////////////																			STEP2
 	roadLen=0;	
 	for(var i=1;i<=20;i++){
 		var r1=$("#road_"+i+"_1").val();
@@ -345,7 +394,7 @@ function autoR(){
 		roadName(i,roadLen/2+80);//创建道路名称
 	}
 	
-	///////////////////////////// 所有路口点位 /////////////////////////////////////////////////////
+	///////////////////////////// 所有路口点位 /////////////////////																		STEP3
 	for(var k=1;k<=20;k++){
 		var r11=parseInt($("#road_"+k+"_1").val());
 		//路口1 绿波时长
@@ -380,12 +429,12 @@ function autoR(){
 		allArry.push(arry1);
 	}
 	//console.log(allArry);
-	//////////////////////////////// 所有路口点位  //////////////////////////////////////////////////
+	//////////////////////////////// 所有路口点位  ///////////////
 	var arry1=allArry[0];
 	var arry2=allArry[1];
 	var arry3=allArry[2];
 	var beginArry=new Array();
-	for(var i=0;i<allArry.length;i++){//找出最后一个路口
+	for(var i=0;i<allArry.length;i++){//找出最后一个路口,反向第一个。																	STEP4
 		if(allArry[i].length>0){
 			beginArry=allArry[i];
 		}
@@ -415,7 +464,7 @@ function autoR(){
 
 	//console.log("arry2:"+arry2);
 	//console.log("arry1:"+arry1);
-	///////////////////////查找交点////////////////////////
+	///////////////////////查找交点////////////////////////																		STEP5
 	var jdArry=new Array();
 	var jdArry_L=new Array();
 	for(var i=0;i<21;i++){//构造数组
@@ -440,7 +489,7 @@ function autoR(){
 				tempArry3.push(arry3[i]);
 			} */
 		
-			for(var k=1;k<=xwcArry.length;k++){//所有路口相位差计算
+			for(var k=1;k<=xwcArry.length;k++){//所有路口相位差计算																	STEP6
 				if(allArry[k-1][j]==beginArry[i]-xwcArry[k-1]){//arry2[j]==y&& 判断路口3交点
 					jdArry[k].push(beginArry[i]-xwcArry[k-1]);//1,倒数第二个路口，2代数第三个路口.3..4..5..
 					jdArry_L[k].push(beginArry[i]);
@@ -453,25 +502,25 @@ function autoR(){
 		}
 	}
 	
-	tempArry2=jdArry[2];
+	/* tempArry2=jdArry[2];
 	tempArry3_2=jdArry_L[2];
 	
 	tempArry1=jdArry[1];
-	tempArry3=jdArry_L[1];
+	tempArry3=jdArry_L[1]; */
 	
 	var tempAllF=new Array();
 	var tempAll=new Array();
-	/* //只保留一个
-	for(var i=0;i<arry3.length;i++){
+	//只保留一个
+	/* for(var i=0;i<arry3.length;i++){
 		for(var j=0;j<tempArry3.length;j++){
 			if(tempArry3[i]==tempArry3_2[j]){
 				tempAll.push(tempArry3[i]);
 				tempAllF.push(tempArry1[i]);
 			}
 		}
-	} */
+	}
 	console.log(beginArry);
-	console.log(jdArry_L);
+	console.log(jdArry_L); */
 	
 	//只保留一个
 	/* console.log(jdArry_L[1]);
@@ -486,39 +535,36 @@ function autoR(){
 				}
 			}
 	}
+	
 	for(var n=3;n<=20;n++){
 		var temp=new Array();
 		var tempF=new Array();
+		if(jdArry_L[n].length<=0&&n<=xwcArry.length){//判断某个路口是否没有绿波相交点
+			return;			
+		}
 		if(jdArry_L[n].length<=0){
 			continue;			
 		}
+		var flag=0;
 		for(var i=0;i<x_len;i++){//以倒序起始路口数量为依据循环查找
 			for(var j=0;j<jdArry_L[1].length;j++){
 				if(tempAll[i]==jdArry_L[n][j]){
 					temp.push(tempAll[i]);
 					tempF.push(tempAllF[i]);
+					flag++;//有重合
 				}
 			}
+		}
+		if(flag==0){//没有交点
+			return;
+		}else{
+			flag=0;//重新进入下次循环计算
 		}
 		tempAll=temp;
 		tempAllF=tempF;
 	}
 	
 	
-/* 	var temp=new Array();
-	var tempF=new Array();
-	for(var i=0;i<x_len;i++){//以倒序起始路口数量为依据循环查找
-		for(var j=0;j<jdArry_L[1].length;j++){
-			if(tempAll[i]==jdArry_L[4][j]){
-				temp.push(tempAll[i]);
-				tempF.push(tempAllF[i]);
-			}
-		}
-	}
-	tempAll=temp;
-	tempAllF=tempF;
- 	*/
- 	
 	//console.log(arry3);
 	//console.log(tempArry3);
 	//画图 ALL
