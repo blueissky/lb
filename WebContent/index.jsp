@@ -89,21 +89,21 @@ layui.use('slider', function(){
 	  slider.render({
 		    elem: '#slideX',  //绑定元素
 		    min:1,
-		    max:100,
+		    max:10,
 		    change: function(value){
 		        console.log(value) //动态获取滑块数值
 		        //do something
-		        $("#xv").val(value/10);
+		        $("#xv").val(value);
 		    }
 	  });
 	  slider.render({
 		    elem: '#slideY',  //绑定元素
 		    min:1,
-		    max:50,
+		    max:10,
 		    change: function(value){
 		        console.log(value) //动态获取滑块数值
 		        //do something
-		        $("#yv").val(value/10);
+		        $("#yv").val(value);
 		    }
 	  });
 });

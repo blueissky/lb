@@ -12,7 +12,7 @@
 <title>Insert title here</title>
 <script src="<%=basePath%>js/jquery-3.4.1.min.js"></script>
 <script src="<%=basePath%>js/jcanvas.js"></script>
-<script src="<%=basePath%>js/base.js"></script>
+<script src="<%=basePath%>js/base2.js"></script>
 <link rel="stylesheet" href="<%=basePath%>js/dist/css/layui.css">
 <script src="<%=basePath%>js/dist/layui.js"></script>
 <style>

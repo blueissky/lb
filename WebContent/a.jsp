@@ -18,14 +18,20 @@
 	<canvas id="myCanvas" width="6000" height="500"></canvas>
 </div>
 <script type="text/javascript">
-var array=new Array();
+/* var array=new Array();
 var a1=new Array();
 a1.push(1);a1.push(2);
 var a2=new Array();
 a2.push(13);a2.push(24);
 array.push(a1);
 array.push(a2);
-console.log(array);
+console.log(array); */
+
+var a=123.456;
+console.log(a);
+console.log(parseInt(a));
+console.log(Math.round(a));
+
 //反向自动计算
 //1距离,2绿波带宽,3相位差
 function autoR(){

@@ -1,19 +1,19 @@
-/////////////创建文本///////////////
-function roadName(name,locX){
+/////////////创建文本/////////////// roadLen/2+80
+function roadName(name,locX,multipleX){
 	$myCanvas.drawText({
 	  fillStyle: 'black',
 	  strokeStyle: '#CD950C',
 	  //strokeWidth: 1,
 	  //x: 200, y:x_len+60,
-	  x: locX, y:x_len+40,
-	  fontSize: 15,
+	  x: (locX-80)/multipleX+80, y:x_len+40,								//MODIFY 4
+	  fontSize: 10,
 	  //fontFamily: 'Georgia, serif',
 	  text: "路口"+name
 	});
 }
 /////////////创建文本///////////////
 /**创建X轴**/
-function xCreate(x_len){
+function xCreate(x_len,multipleX){
 	/*STEP 1 变量*/
 	//X轴长度  200为变量值
 	/*STEP 1 变量*/
@@ -24,7 +24,7 @@ function xCreate(x_len){
 		x2:40,y2:x_len
 	});
 	//X轴刻度距离
-	var x_area=40;
+	var x_area=20;
 	var forTimes=x_len;
 	for(var i=1;i<=x_len/x_area;i++){
 		forTimes=x_len-(i*x_area);
@@ -43,12 +43,13 @@ function xCreate(x_len){
 		  fontSize: 12,
 		  //fontFamily: 'Verdana, sans-serif',
 		  //两个像素为1秒
-		  text: forTimes/2
+		  //text: forTimes/2								MODIFY 4
+		  text: (forTimes/2)*multipleX
 		});
 	}
 }
 /**创建Y轴**/
-function yCreate(x_len,y_len){
+function yCreate(x_len,y_len,multipleY){
 	//Y轴 //40为偏移量 880 为变量值
 	
 	/*STEP 2 变量*/
@@ -78,18 +79,20 @@ function yCreate(x_len,y_len){
 		  fontSize: 12,
 		  //fontFamily: 'Verdana, sans-serif',
 		  //两个像素为1秒
-		  text: (i-1)*y_area*2
+		  //text: (i-1)*y_area*2								MODIFY 4
+		  text: (i-1)*y_area*2*multipleY
 		});
 	}
 }
 
 				 //X轴长度,路口位置,  总周期,绿波时长,   相位差
-function createLoc(x_len,road_len,sum_c,green_len,xwc){
+function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX){
 	//////////////////////////////绿波轴///////////////////////////////////
 	/*STEP 3 变量*/
 	//路口A位置 80 为0起始
 	//var road_len=800;
-	var road_loc=80+(road_len/2);
+	//var road_loc=80+(road_len/2);								MODIFY 4
+	var road_loc=80+((road_len/2) / multipleX);
 	/*STEP 3 变量*/
 	
 	$myCanvas.drawLine({
@@ -110,14 +113,17 @@ function createLoc(x_len,road_len,sum_c,green_len,xwc){
 	
 	var cycle=x_len/(sum_c*2);
 	//var region=(50*2)-40;//非绿波时间
-	var r_y1=x_len-(green_len*2);//2为固定值
+	//var r_y1=x_len-(green_len*2);//2为固定值						MODIFY 4
+	var r_y1=x_len-(green_len*2/multipleX);//2为固定值
 	var r_y2=x_len;
 	for(var i=0;i<cycle;i++){
 		$myCanvas.drawLine({
 			strokeStyle:'#228B22',
 			strokeWidth:10,
-			x1:road_loc,y1:r_y1-(sum_c*2)*i-(xwc*2),
-			x2:road_loc,y2:r_y2-(sum_c*2)*i-(xwc*2)
+			/*x1:road_loc,y1:r_y1 - (sum_c*2)*i-(xwc*2) ,		MODIFY 4
+			x2:road_loc,y2:r_y2 - (sum_c*2)*i-(xwc*2)*/
+			x1:road_loc,y1:r_y1 - (sum_c*2)*i-(xwc*2)/multipleX ,
+			x2:road_loc,y2:r_y2 - (sum_c*2)*i-(xwc*2)/multipleX
 		});
 	}
 	//////////////////////////////绿波轴///////////////////////////////////
@@ -128,50 +134,61 @@ function xwc_sl(lenEnd,speed){
 	return time_xwc;
 }
 
-////////////////////////创建正向绿波带////////////////////////
-//绿波带宽度（小）		  绿波时长,   上偏移量,绿波周期,路口距离，绿波周期
-function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){
-	var time=(lenEnd*2)/(speed*1000/3600);
+////////////////////////创建正向绿波带BEGIN////////////////////////
+//绿波带宽度（单条 小）		  绿波时长,   上偏移量,绿波周期,路口距离，绿波周期
+function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){
+	//var time=(lenEnd*2)/(speed*1000/3600);								   MODIFY	 4
+	var time=(lenEnd*2/multipleX)/(speed*1000/3600);
 	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
-	for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){
+	//for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){							MODIFY	 4
+	for(var i=0;i<(lv_cycle-downSub-upAdd)*2/multipleY;i++){
 		$('canvas').drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
-			x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
-			x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,
+			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
+			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
+			x1:80,y1:x_len-(sum_c*2)-i-upAdd*2/multipleX-(xwc*2/multipleX),
+			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX),
 		});
 	}
 }
-//绿波带条数(大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
-function createGreen(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){	
+//绿波带条数(总 大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
+function createGreen(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){
 	for(var i=0;i<y_len/sum_c;i++){
 	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
-		createLv(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc);	
+		createLv(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc,multipleX,multipleY);	
 	
 	}
 }
-////////////////////////创建正向绿波带////////////////////////
+////////////////////////创建正向绿波带END////////////////////////
 
-//创建反向绿波带
+////////////////////////创建反向绿波带BEGIN////////////////////////
+//创建反向绿波带 (单条绿波带)
 //绿波时长，路口距离，绿波周期
-function createLv_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){
-	var time=(lenEnd*2)/(speed*1000/3600);
+function createLv_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){//
+	//var time=(lenEnd*2)/(speed*1000/3600);								  MODIFY 4
+	var time=(lenEnd*2/multipleX)/(speed*1000/3600);
 	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
-	for(var i=0;i<(lv_cycle-upAdd-downSub)*2;i++){
+	//for(var i=0;i<(lv_cycle-upAdd-downSub)*2;i++){							 MODIFY 4
+	for(var i=0;i<(lv_cycle-upAdd-downSub)*2/multipleY;i++){
+				  //绿波周期-偏移量	
 		$('canvas').drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
-			x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
-			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2
+			/*x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,								 MODIFY 4	
+			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2*/
+			x1:(lenEnd/2)/multipleX+80,y1:x_len-(sum_c*2)-i-upAdd*2/multipleY-(xwc*2/multipleY),
+			x2:(lenEnd/2)/multipleX+(lenEnd/2)/multipleX-lenEnd/multipleX+80,y2:x_len-(sum_c*2)-time-i-upAdd/multipleY*2-(xwc*2/multipleY)
+														//时间总距离-绿波待处理总长-
 		});
 	}
-}
-//绿波周期，向上偏移量，向下偏移量，周期，总路程，车速
-function createGreen_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc){	
+} 
+//绿波周期，向上偏移量，向下偏移量，周期，总路程，车速	（总条数）
+function createGreen_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){	
 	for(var i=0;i<y_len/sum_c;i++){
 	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
-		createLv_R(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc);	
+		createLv_R(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc,multipleX,multipleY);	
 	
 	}
 }
-//创建反向绿波带
+////////////////////////创建反向绿波带END////////////////////////
