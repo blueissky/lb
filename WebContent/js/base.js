@@ -86,13 +86,13 @@ function yCreate(x_len,y_len,multipleY){
 }
 
 				 //X轴长度,路口位置,  总周期,绿波时长,   相位差
-function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX){
+function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX,multipleY){
 	//////////////////////////////绿波轴///////////////////////////////////
 	/*STEP 3 变量*/
 	//路口A位置 80 为0起始
 	//var road_len=800;
 	//var road_loc=80+(road_len/2);								MODIFY 4
-	var road_loc=80+((road_len/2) / multipleX);
+	var road_loc=80+((road_len/2) / multipleY);
 	/*STEP 3 变量*/
 	
 	$myCanvas.drawLine({
@@ -141,14 +141,16 @@ function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multip
 	var time=(lenEnd*2/multipleX)/(speed*1000/3600);
 	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
 	//for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){							MODIFY	 4
-	for(var i=0;i<(lv_cycle-downSub-upAdd)*2/multipleY;i++){
+	for(var i=0;i<(lv_cycle/multipleX-downSub/multipleX-upAdd/multipleX)*2;i++){
 		$('canvas').drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
 			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
 			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
-			x1:80,y1:x_len-(sum_c*2)-i-upAdd*2/multipleX-(xwc*2/multipleX),
-			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX),
+			x1:80,					   y1:x_len-(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2/multipleY),
+									   //总长度-总周期-变量i-上偏移量-相位差
+			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleY)
+									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
 		});
 	}
 }

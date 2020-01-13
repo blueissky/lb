@@ -132,7 +132,7 @@ function clearPanel(){
     ctx.fillRect(41, 30+x_len, y_len, 40);   
 }
 function commonCycle(){
-	var v=$("#common_cycle_show").val()/4;
+	var v=$("#common_cycle_show").val()/multipleX;																	//MODIFY 4
 		  $("#common_cycle").val(v);
 }
 ////////////////////////1距离,2绿波带宽,3相位差//////////////////////
@@ -158,7 +158,7 @@ function show1(){
 		}
 		roadLen+=parseInt(r1);
 		//console.log(roadLen);
-		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLen/2+80,multipleX);//创建道路名称
 	}
 	var r3=$("#road_1_3").val();
@@ -187,7 +187,7 @@ function show2(){
 		}
 		roadLen+=parseInt(r1);
 		//console.log(roadLen);
-		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLen/2+80,multipleX);//创建道路名称
 	}
 	//创建反向绿波带
@@ -226,7 +226,7 @@ function showZ(){
 			break;
 		}
 		roadLen+=parseInt(r1);
-		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLen/2+80,multipleX);//创建道路名称
 	}
 	var r3=$("#road_1_3").val();
@@ -271,7 +271,7 @@ function showR(){
 			last3=r3;
 		}
 		roadLen+=parseInt(r1);
-		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLen/2+80,multipleX);//创建道路名称
 	}
 	//反向
@@ -294,7 +294,7 @@ function autoZ(){
 			continue;
 		}
 		roadLen+=parseInt(r1);
-		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLen/2+80,multipleX);//创建道路名称
 	}
 	//上轴计算		//向下缩减
@@ -409,7 +409,7 @@ function autoR2(){
 			break;
 		}
 		roadLenR+=parseInt(r1);
-		createLoc(x_len_plus,roadLenR,common_cycle,r2,r3,multipleX);//创建绿信
+		createLoc(x_len_plus,roadLenR,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
 		roadName(i,roadLenR/2+80,multipleX);//创建道路名称
 	}
 	
