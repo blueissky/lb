@@ -1,11 +1,11 @@
 /////////////创建文本/////////////// roadLen/2+80
-function roadName(name,locX,multipleX){
+function roadName(name,locX,multipleY){
 	$myCanvas.drawText({
 	  fillStyle: 'black',
 	  strokeStyle: '#CD950C',
 	  //strokeWidth: 1,
 	  //x: 200, y:x_len+60,
-	  x: (locX-80)/multipleX+80, y:x_len+40,								//MODIFY 4
+	  x: (locX-80)/multipleY+80, y:x_len+40,								//MODIFY 4
 	  fontSize: 10,
 	  //fontFamily: 'Georgia, serif',
 	  text: "路口"+name
@@ -147,9 +147,9 @@ function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multip
 			strokeWidth:1,
 			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
 			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
-			x1:80,					   y1:x_len-(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2/multipleY),
+			x1:80,					   y1:x_len-(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2/multipleX),
 									   //总长度-总周期-变量i-上偏移量-相位差
-			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleY)
+			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)
 									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
 		});
 	}
@@ -172,15 +172,15 @@ function createLv_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,mult
 	var time=(lenEnd*2/multipleX)/(speed*1000/3600);
 	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
 	//for(var i=0;i<(lv_cycle-upAdd-downSub)*2;i++){							 MODIFY 4
-	for(var i=0;i<(lv_cycle-upAdd-downSub)*2/multipleY;i++){
+	for(var i=0;i<(lv_cycle/multipleX-upAdd/multipleX-downSub/multipleX)*2;i++){
 				  //绿波周期-偏移量	
 		$('canvas').drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
 			/*x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,								 MODIFY 4	
 			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2*/
-			x1:(lenEnd/2)/multipleX+80,y1:x_len-(sum_c*2)-i-upAdd*2/multipleY-(xwc*2/multipleY),
-			x2:(lenEnd/2)/multipleX+(lenEnd/2)/multipleX-lenEnd/multipleX+80,y2:x_len-(sum_c*2)-time-i-upAdd/multipleY*2-(xwc*2/multipleY)
+			x1:(lenEnd/2)/multipleY+80,										 y1:x_len-(sum_c*2)		-i-upAdd*2/multipleX-(xwc*2/multipleX),
+			x2:(lenEnd/2)/multipleY+(lenEnd/2)/multipleY-lenEnd/multipleY+80,y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)
 														//时间总距离-绿波待处理总长-
 		});
 	}

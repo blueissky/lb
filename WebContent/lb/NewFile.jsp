@@ -159,11 +159,13 @@ function show1(){
 		roadLen+=parseInt(r1);
 		//console.log(roadLen);
 		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLen/2+80,multipleX);//创建道路名称
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
 	}
 	var r3=$("#road_1_3").val();
 	//创建正向绿波带
 	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val(),r3,multipleX,multipleY);
+	var w=parseInt($("#road_1_2").val())-parseInt($("#common_up").val())-parseInt($("#common_down").val());
+	$("#common_width").val(w);
 }
 //反向
 function show2(){
@@ -188,10 +190,13 @@ function show2(){
 		roadLen+=parseInt(r1);
 		//console.log(roadLen);
 		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLen/2+80,multipleX);//创建道路名称
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
 	}
 	//创建反向绿波带
 	createGreen_R(last2,parseInt($("#common_up_r").val()),parseInt($("#common_down_r").val()),common_cycle,roadLen,$("#common_speed_r").val(),last3,multipleX,multipleY);	
+	
+	var w=last2-parseInt($("#common_up_r").val())-parseInt($("#common_down_r").val());
+	$("#common_width_r").val(w);
 }
 //////////////////////正向绿波相位差//////////////////////
 function showZ(){
@@ -227,7 +232,7 @@ function showZ(){
 		}
 		roadLen+=parseInt(r1);
 		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLen/2+80,multipleX);//创建道路名称
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
 	}
 	var r3=$("#road_1_3").val();
 	//创建正向绿波带
@@ -272,7 +277,7 @@ function showR(){
 		}
 		roadLen+=parseInt(r1);
 		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLen/2+80,multipleX);//创建道路名称
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
 	}
 	//反向
 	createGreen_R(last2,parseInt($("#common_up_r").val()),parseInt($("#common_down_r").val()),common_cycle,roadLen,$("#common_speed_r").val(),last3,multipleX,multipleY);
@@ -295,7 +300,7 @@ function autoZ(){
 		}
 		roadLen+=parseInt(r1);
 		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLen/2+80,multipleX);//创建道路名称
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
 	}
 	//上轴计算		//向下缩减
 	//y=x/speed+b
@@ -361,12 +366,12 @@ function autoZ(){
 	//var r3=$("#road_1_3").val();
 	//创建正向绿波带
 	createGreen($("#road_1_2").val(),tempUp,parseInt($("#road_1_2").val())-tempDown,common_cycle,roadLen,common_speed,0,multipleX,multipleY);
-	$("#common_up").val(tempUp);
-	$("#common_down").val(parseInt($("#road_1_2").val())-tempDown);
+	$("#common_up").val(parseInt(tempUp));
+	$("#common_down").val(parseInt($("#road_1_2").val())-parseInt(tempDown));
 	
 	//绿波带宽计算
-	var u=tempUp;
-	var d=parseInt($("#road_1_2").val())-tempDown;
+	var u=parseInt(tempUp);
+	var d=parseInt($("#road_1_2").val())-parseInt(tempDown);
 	var common_width=$("#common_width").val(parseInt($("#road_1_2").val())-u-d);
 }
 
@@ -410,7 +415,7 @@ function autoR2(){
 		}
 		roadLenR+=parseInt(r1);
 		createLoc(x_len_plus,roadLenR,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
-		roadName(i,roadLenR/2+80,multipleX);//创建道路名称
+		roadName(i,roadLenR/2+80,multipleY);//创建道路名称
 	}
 	
 	///////////////////////////// 所有路口点位 /////////////////////																		STEP3
@@ -428,19 +433,23 @@ function autoR2(){
 		//}
 		var arry1=new Array();
 		var base=0;
-		var differ=parseInt(common_cycle)*2-r12*2/multipleY;		//总周期-绿波时长							//MODIFY 4	
+		var differ=0;		//总周期-绿波时长	parseInt(common_cycle)*2-r12*2/multipleY						//MODIFY 4	
 		for(var i=0;i<x_len_plus/parseInt(common_cycle);i++){//判断几个大周期
 			if(i==0){
 				differ=0;
 			}else{
-				differ=parseInt(common_cycle)*2-r12*2/multipleY;    //总周期-绿波时长							//MODIFY 4
+				differ=parseInt(common_cycle)*2-r12*2/multipleX;    //总周期-绿波时长							//MODIFY 4
 			}
-			for(var j=1;j<=r12*2/multipleY;j++){															//MODIFY 4
-				arry1.push( parseInt(x_len_plus - (r13/multipleY+j + differ + base)-r13/multipleY) );				//MODIFY 4
+			for(var j=1;j<=r12*2/multipleX;j++){  //单条绿波宽度															//MODIFY 4
+				arry1.push( parseInt(x_len_plus - (r13*2/multipleY+j + differ + base)) );				//MODIFY 4
+									//总长度               相位差                 递增        周期差    基量           相位差 -r13*2/multipleY
+				//arry1.push( parseInt(x_len_plus - (r13/1+j + differ + base)-r13/1) );
 				//base=r13+j + i*differ + base;
 				//console.log("x_len:"+x_len +" r13："+ r13+" j:"+j +" differ："+ differ +" base："+ base+" r13:"+r13);
-				if(j==r12*2/multipleY){																		//MODIFY 4
-					base=r13/multipleY+j + differ + base-r13/multipleY;												//MODIFY 4	
+				if(j== parseInt(r12*2/multipleX) ){																		//MODIFY 4
+					base=j + differ + base;												//MODIFY 4
+					//base=j + differ + base;
+					//base=r13/1+j + differ + base-r13/1;												//MODIFY 4
 					//console.log(base);
 				}
 			}
@@ -448,7 +457,7 @@ function autoR2(){
 		//console.log(arry1);
 		allArry.push(arry1);
 	}
-	//console.log(allArry);
+	console.log(allArry);
 	//////////////////////////////// 所有路口点位  ///////////////
 	var arry1=allArry[0];
 	var arry2=allArry[1];
@@ -472,8 +481,8 @@ function autoR2(){
 		jdArry_L.push(new Array());
 	}
 	xwcArry.reverse();
-	console.log("beginArry:"+beginArry);
-	console.log("xwcArry:"+xwcArry);
+	//console.log("beginArry:"+beginArry);
+	//console.log("xwcArry:"+xwcArry);
 	for(var i=0;i<x_len_plus;i++){//大周期绿波
 		for(var j=0;j<x_len_plus;j++){//单条绿波
 			
@@ -489,8 +498,8 @@ function autoR2(){
 			
 		}
 	}
-	console.log(jdArry);
-	console.log(jdArry_L);
+	//console.log(jdArry);
+	//console.log(jdArry_L);
 	
 	var tempAllF=new Array();
 	var tempAll=new Array();
@@ -539,8 +548,8 @@ function autoR2(){
 		$myCanvas.drawLine({
 			strokeStyle:'#7CFC00',
 			strokeWidth:1,
-			x1:(roadLen/multipleX+160)/2,y1:tempAll[i],							//MODIFY 4  
-			x2:(roadLen/multipleX+160-roadLen/multipleX)/2,y2:tempAllF[i]				//MODIFY 4
+			x1:(roadLen/multipleY+160)/2,y1:tempAll[i],							//MODIFY 4  
+			x2:(roadLen/multipleY+160-roadLen/multipleY)/2,y2:tempAllF[i]				//MODIFY 4
 		});//x2固定,y2变化
 	}
 	//console.log(tempAll);
