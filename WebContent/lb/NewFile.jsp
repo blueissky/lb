@@ -54,7 +54,7 @@ body {
     <button onclick="showZ()" type="button" class="layui-btn layui-btn-normal">正向相位差</button>
     <button onclick="showR()" type="button" class="layui-btn layui-btn-normal">反向相位差</button>
     <button onclick="autoZ()" type="button" class="layui-btn layui-btn-danger">正向绿波协调</button>
-    <button onclick="autoR2()" type="button" class="layui-btn layui-btn-danger">反向绿波协调</button>
+    <button onclick="autoZR()" type="button" class="layui-btn layui-btn-danger">反向绿波协调</button>
     <button onclick="clearPanel()" type="button" class="layui-btn layui-btn-normal">清除</button>
     <br><br>
     <div style="height: 0px;width: 100%;border: 1px;border-color: gray;border-style: solid;"></div>
@@ -169,7 +169,7 @@ function show1(){
 }
 //反向
 function show2(){
-	var common_speed=$("#common_speed").val();
+	var common_speed_r=$("#common_speed_r").val();
 	var common_cycle=$("#common_cycle").val();
 	//反向使用
 	var last2=0;
@@ -374,6 +374,108 @@ function autoZ(){
 	var d=parseInt($("#road_1_2").val())-parseInt(tempDown);
 	var common_width=$("#common_width").val(parseInt($("#road_1_2").val())-u-d);
 }
+//////////////////////////////正向自动计算//////////////////////////////////////////////
+
+//////////////////////////////反向自动计算//////////////////////////////////////////////
+//1距离,2绿波带宽,3相位差
+function autoZR(){
+	var common_speed_r=$("#common_speed_r").val();
+	var common_cycle=$("#common_cycle").val();
+	//路段长度
+	var roadLen=0;
+	var lastI2=0;
+	var bool=true;
+	for(var i=1;i<=20;i++){
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}else{
+			if(bool){
+				lastI2=r2;
+				bool=false;
+			}			
+		}
+		roadLen+=parseInt(r1);
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
+	}
+	//上轴计算		//向下缩减
+	//y=x/speed+b
+	//截距=(时间+相位差)-(距离/车速)
+	var arr1=new Array();
+	roadLen=0;
+	for(var i=20;i>0;i--){
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		var a1 = parseInt($("#road_"+i+"_2").val())+parseInt($("#road_"+i+"_3").val()) - parseInt(roadLen) / (parseInt(common_speed_r)*1000/3600);
+		roadLen+=parseInt(r1);
+		//绿波时长+相位差-
+		arr1.push(a1);
+	}
+	var tempDown=arr1[0];
+	for(var i=1;i<arr1.length;i++){
+		if(tempDown>arr1[i]){//取最小截距值
+			tempDown=arr1[i];
+		}
+	}
+	if(tempDown<0){
+		tempDown=0;	
+	}else{
+		tempDown=tempDown;//																			
+	}
+	console.log("tempDown:"+tempDown);
+	//下轴计算		//向上缩减
+	//y=x/speed+b
+	//截距=(相位差)-(距离/车速)
+	var arr2=new Array();
+	roadLen=0;
+	for(var i=20;i>0;i--){   
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		var a1 = parseInt($("#road_"+i+"_3").val()) -  parseInt(roadLen) / (parseInt(common_speed_r)*1000/3600); 
+		roadLen+=parseInt(r1);
+				//相位差-路长/
+		arr2.push(a1);
+	}	
+	var tempUp=arr2[0];
+	for(var i=1;i<arr2.length;i++){
+		if(tempUp<arr2[i]){//取最大截距值
+			tempUp=arr2[i];
+		}
+	}
+	if(tempUp<0){
+		tempUp=0;	
+	}else{
+		tempUp=tempUp;//																				
+	}
+	console.log("tempUp:"+tempUp);
+	
+	//var r3=$("#road_1_3").val();
+	//创建反向绿波带
+	createGreen_R(lastI2,tempUp,parseInt(lastI2)-tempDown,							  common_cycle,roadLen,common_speed_r,0,multipleX,multipleY);
+	//createGreen_R($("#road_1_2").val(),tempUp,parseInt($("#road_1_2").val())-tempDown,common_cycle,roadLen,common_speed,0,multipleX,multipleY);
+	$("#common_up_r").val(parseInt(tempUp));
+	$("#common_down_r").val(parseInt(lastI2)-parseInt(tempDown));
+	
+	//绿波带宽计算
+	var u=parseInt(tempUp);
+	var d=parseInt(lastI2)-parseInt(tempDown);
+	var common_width=$("#common_width_r").val(parseInt(lastI2)-u-d);
+}
+//////////////////////////////反向自动计算//////////////////////////////////////////////
 
 //反向绿波带计算 非自动计算相位差/////////////////////////BEGIN///////////////////////////////////
 //1距离,2绿波带宽,3相位差
