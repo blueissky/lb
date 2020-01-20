@@ -49,7 +49,8 @@ public class BeginAction extends HttpServlet {
 			roadPanel.append("<label>路口"+i+"</label>");
 			roadPanel.append("<label>长度</label> <input id=\"road_"+i+"_1\" type=\"text\" ");
 			roadPanel.append("<label>绿波时长</label> <input id=\"road_"+i+"_2\" type=\"text\" ");
-			roadPanel.append("<label>相位差</label> <input id=\"road_"+i+"_3\" type=\"text\" <br><br>");
+			roadPanel.append("<label>相位差</label> <input id=\"road_"+i+"_3\" type=\"text\" ");
+			roadPanel.append("<label>"+(i-1)+"-"+i+" 车速</label> <input id=\"road_"+i+"_4\" type=\"text\" <br><br>");
 		}
 		request.setAttribute("roadPanel", roadPanel.toString());
 		request.getRequestDispatcher("/lb/NewFile.jsp").forward(request,response);

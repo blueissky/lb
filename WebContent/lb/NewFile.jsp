@@ -55,12 +55,15 @@ body {
     <button onclick="showR()" type="button" class="layui-btn layui-btn-normal">反向相位差</button>
     <button onclick="autoZ()" type="button" class="layui-btn layui-btn-danger">正向绿波协调</button>
     <button onclick="autoZR()" type="button" class="layui-btn layui-btn-danger">反向绿波协调</button>
+    <button onclick="computeZ()" type="button" class="layui-btn layui-btn-warm">正向单车速计算</button>
+    <button onclick="computeR()" type="button" class="layui-btn layui-btn-warm">反向单车速计算</button>
     <button onclick="clearPanel()" type="button" class="layui-btn layui-btn-normal">清除</button>
     <br><br>
     <div style="height: 0px;width: 100%;border: 1px;border-color: gray;border-style: solid;"></div>
     <br><br>
     
     <div id="roadPanel">
+    	
 	    <!-- <label>路口1</label> 
 	    <label>长度</label> <input id="road_1_1" type="text" value="0">
 	    <label>绿波时长</label> <input id="road_1_2" type="text" value="30">
@@ -112,7 +115,7 @@ $myCanvas.drawText({
 	  //strokeStyle: 'Green',
 	  //strokeWidth: 1,
 	  //x: 200, y:x_len+60,
-	  x: 40, y:x_len+20,
+	  x: 26, y:x_len+20,
 	  fontSize: 15,
 	  //fontFamily: 'Verdana, sans-serif',
 	  text: "s/m"
@@ -130,6 +133,14 @@ function clearPanel(){
     var ctx = canvas.getContext("2d");
     ctx.fillStyle = "rgb(255,255,255)";
     ctx.fillRect(41, 30+x_len, y_len, 40);   
+}
+function clearBottom(){
+	//清除底部区域
+	var canvas = document.getElementById('myCanvas');
+    if(!canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillRect(41,x_len, y_len, x_len);  
 }
 function commonCycle(){
 	var v=$("#common_cycle_show").val()/multipleX;																	//MODIFY 4
@@ -166,6 +177,11 @@ function show1(){
 	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val(),r3,multipleX,multipleY);
 	var w=parseInt($("#road_1_2").val())-parseInt($("#common_up").val())-parseInt($("#common_down").val());
 	$("#common_width").val(w);
+	
+	//清除，重建
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//创建路名
 }
 //反向
 function show2(){
@@ -197,6 +213,11 @@ function show2(){
 	
 	var w=last2-parseInt($("#common_up_r").val())-parseInt($("#common_down_r").val());
 	$("#common_width_r").val(w);
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
 }
 //////////////////////正向绿波相位差//////////////////////
 function showZ(){
@@ -237,6 +258,11 @@ function showZ(){
 	var r3=$("#road_1_3").val();
 	//创建正向绿波带
 	createGreen($("#road_1_2").val(),parseInt($("#common_up").val()),parseInt($("#common_down").val()),common_cycle,roadLen,$("#common_speed").val(),r3,multipleX,multipleY);
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
 }
 ////////////////////////反向绿波相位差//////////////////////
 //1距离,2绿波带宽,3相位差
@@ -281,6 +307,11 @@ function showR(){
 	}
 	//反向
 	createGreen_R(last2,parseInt($("#common_up_r").val()),parseInt($("#common_down_r").val()),common_cycle,roadLen,$("#common_speed_r").val(),last3,multipleX,multipleY);
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
 }
 
 //////////////////////////////正向自动计算//////////////////////////////////////////////
@@ -373,6 +404,11 @@ function autoZ(){
 	var u=parseInt(tempUp);
 	var d=parseInt($("#road_1_2").val())-parseInt(tempDown);
 	var common_width=$("#common_width").val(parseInt($("#road_1_2").val())-u-d);
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
 }
 //////////////////////////////正向自动计算//////////////////////////////////////////////
 
@@ -474,6 +510,11 @@ function autoZR(){
 	var u=parseInt(tempUp);
 	var d=parseInt(lastI2)-parseInt(tempDown);
 	var common_width=$("#common_width_r").val(parseInt(lastI2)-u-d);
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
 }
 //////////////////////////////反向自动计算//////////////////////////////////////////////
 
@@ -673,11 +714,127 @@ function autoR2(){
 		}
 	}
 	
-	
-	
 }	
 	
 //////////////////////////////绿波轴///////////////////////////////////
+
+//正向单车速计算
+function computeZ(){
+	//var common_speed=$("#common_speed").val();
+	var common_cycle=$("#common_cycle").val();
+	
+	//路段长度
+	var roadLen=0;
+	for(var i=1;i<=20;i++){
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		roadLen+=parseInt(r1);
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
+	}
+	//上轴计算		//向下缩减
+	//y=x/speed+b
+	//截距=(时间+相位差)-(距离/车速)
+	var beginLen=0;
+	for(var i=1;i<=20;i++){
+		var roadLen=0;
+		var r1=$("#road_"+(i+1)+"_1").val();//距离
+		var r2=$("#road_"+i+"_2").val();//绿信
+		var r3=$("#road_"+i+"_3").val();//相位差
+		var r4=$("#road_"+(i+1)+"_4").val();//区间车速
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		beginLen+=parseInt($("#road_"+i+"_1").val());
+		//上轴
+		roadLen=parseInt(r1);
+		var a1 = parseInt(r2)+parseInt(r3) + parseInt(roadLen) / (parseInt(r4)*1000/3600);
+		//路口1 绿波时长+相位差+车速时间
+		var a2 = parseInt($("#road_"+(i+1)+"_2").val())+parseInt($("#road_"+(i+1)+"_3").val())
+		//路口2 绿波时长+相位差
+		var tempDown=a1<a2?0:a1-a2;
+		console.log("tempDown:"+tempDown);
+		//下轴
+		//路口1 相位差+车速时间
+		var b1 = parseInt(r3) +  parseInt(roadLen) / (parseInt(r4)*1000/3600);
+		//路口2 相位差
+		var b2 = parseInt($("#road_"+(i+1)+"_3").val());
+		var tempUp=b1>b2?0:b2-b1;
+		console.log("tempDown:"+tempUp);
+		createFGreen(r2,tempUp,tempDown,common_cycle,beginLen,beginLen+roadLen,parseInt(r4),parseInt(r1),parseInt(r3),multipleX,multipleY);
+	}	//																										           车速		  相位差 																								
+	
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
+}
+//反向单车速计算
+function computeR(){
+	//var common_speed=$("#common_speed").val();
+	var common_cycle=$("#common_cycle").val();
+	
+	//路段长度
+	var roadLen=0;
+	for(var i=1;i<=20;i++){
+		var r1=$("#road_"+i+"_1").val();
+		var r2=$("#road_"+i+"_2").val();
+		var r3=$("#road_"+i+"_3").val();
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		roadLen+=parseInt(r1);
+		createLoc(x_len,roadLen,common_cycle,r2,r3,multipleX,multipleY);//创建绿信
+		roadName(i,roadLen/2+80,multipleY);//创建道路名称
+	}
+	//上轴计算		//向下缩减
+	//y=x/speed+b
+	//截距=(时间+相位差)-(距离/车速)
+	var beginLen=0;
+	var road=0;
+	for(var i=20;i>1;i--){
+		var r1=$("#road_"+i+"_1").val();//距离
+		var r2=$("#road_"+i+"_2").val();//绿信
+		var r3=$("#road_"+i+"_3").val();//相位差
+		var r4=$("#road_"+i+"_4").val();//区间车速
+		if(r1==""||r1==null){
+			console.log("结束："+i);
+			continue;
+		}
+		beginLen=parseInt($("#road_"+i+"_1").val());
+		//上轴
+		road=parseInt(r1);
+		var a1 = parseInt(r2)+parseInt(r3) + parseInt(road) / (parseInt(r4)*1000/3600);
+		//路口1 绿波时长+相位差+车速时间
+		var a2 = parseInt($("#road_"+(i-1)+"_2").val())+parseInt($("#road_"+(i-1)+"_3").val())
+		//路口2 绿波时长+相位差
+		var tempDown=a1<a2?0:a1-a2;
+		console.log("tempDown:"+tempDown);
+		////////////////////////////////////////////////////////////////////////////////////////
+		//下轴
+		//路口1 相位差+车速时间
+		var b1 = parseInt(r3) +  parseInt(road) / (parseInt(r4)*1000/3600);
+		//路口2 相位差
+		var b2 = parseInt($("#road_"+(i-1)+"_3").val());
+		var tempUp=b1>b2?0:b2-b1;
+		console.log("tempDown:"+tempUp);
+		createFGreen_R(r2,tempUp,tempDown,common_cycle,roadLen-beginLen,roadLen,parseInt(r4),parseInt(r1),parseInt(r3),multipleX,multipleY);
+		//																										           车速		  相位差 			
+		roadLen=roadLen-beginLen;
+	}
+	//清除，重建 begin//
+	clearBottom();
+	yCreate(x_len,y_len,multipleY);
+	//end//
+}
+
 </script>
 </body>
 </html>

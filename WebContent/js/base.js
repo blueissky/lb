@@ -1,3 +1,9 @@
+//生成绿波向下延伸 400 修改ALTER 对应的值
+var common_len=400;
+var common_max=2;
+//测试归零相位状态
+//var common_len=0;
+//var common_max=1;
 /////////////创建文本/////////////// roadLen/2+80
 function roadName(name,locX,multipleY){
 	$myCanvas.drawText({
@@ -111,7 +117,7 @@ function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX,multipleY){
 	//var xwc=40;
 	/*STEP 4 变量*/
 	
-	var cycle=x_len/(sum_c*2);
+	var cycle=x_len/(sum_c*2)*common_max;								//ALTER 2
 	//var region=(50*2)-40;//非绿波时间
 	//var r_y1=x_len-(green_len*2);//2为固定值						MODIFY 4
 	var r_y1=x_len-(green_len*2/multipleX);//2为固定值
@@ -122,8 +128,8 @@ function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX,multipleY){
 			strokeWidth:10,
 			/*x1:road_loc,y1:r_y1 - (sum_c*2)*i-(xwc*2) ,		MODIFY 4
 			x2:road_loc,y2:r_y2 - (sum_c*2)*i-(xwc*2)*/
-			x1:road_loc,y1:r_y1 - (sum_c*2)*i-(xwc*2)/multipleX ,
-			x2:road_loc,y2:r_y2 - (sum_c*2)*i-(xwc*2)/multipleX
+			x1:road_loc,y1:r_y1+common_len - (sum_c*2)*i-(xwc*2)/multipleX ,  //ALTER 2
+			x2:road_loc,y2:r_y2+common_len - (sum_c*2)*i-(xwc*2)/multipleX    //ALTER 2
 		});
 	}
 	//////////////////////////////绿波轴///////////////////////////////////
@@ -147,16 +153,16 @@ function createLv(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multip
 			strokeWidth:1,
 			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
 			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
-			x1:80,					   y1:x_len-(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2/multipleX),
+			x1:80,					   y1:x_len +common_len -(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2/multipleX),   //ALTER 2
 									   //总长度-总周期-变量i-上偏移量-相位差
-			x2:80+(lenEnd/2/multipleY),y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)
+			x2:80+(lenEnd/2/multipleY),y2:x_len +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)  //ALTER 2
 									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
 		});
 	}
 }
 //绿波带条数(总 大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
 function createGreen(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){
-	for(var i=0;i<y_len/sum_c;i++){
+	for(var i=0;i<(y_len/sum_c)*common_max;i++){											//ALTER 2
 	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
 		createLv(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc,multipleX,multipleY);	
 	
@@ -175,22 +181,90 @@ function createLv_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,mult
 	for(var i=0;i<(lv_cycle/multipleX-upAdd/multipleX-downSub/multipleX)*2;i++){
 				  //绿波周期-偏移量	
 		$('canvas').drawLine({
-			strokeStyle:'#7CFC00',
+			strokeStyle:'#00BFFF',
 			strokeWidth:1,
 			/*x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,								 MODIFY 4	
 			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2*/
-			x1:(lenEnd/2)/multipleY+80,										 y1:x_len-(sum_c*2)		-i-upAdd*2/multipleX-(xwc*2/multipleX),
-			x2:(lenEnd/2)/multipleY+(lenEnd/2)/multipleY-lenEnd/multipleY+80,y2:x_len-(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)
+			x1:(lenEnd/2)/multipleY+80,										 y1:x_len  +common_len  -(sum_c*2)		-i-upAdd*2/multipleX-(xwc*2/multipleX), //ALTER 2
+			x2:(lenEnd/2)/multipleY+(lenEnd/2)/multipleY-lenEnd/multipleY+80,y2:x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)  //ALTER 2
 														//时间总距离-绿波待处理总长-
 		});
 	}
 } 
 //绿波周期，向上偏移量，向下偏移量，周期，总路程，车速	（总条数）
 function createGreen_R(lv_cycle,upAdd,downSub,sum_c,lenEnd,speed,xwc,multipleX,multipleY){	
-	for(var i=0;i<y_len/sum_c;i++){
+	for(var i=0;i<(y_len/sum_c)*common_max;i++){    //ALTER 2
 	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
 		createLv_R(lv_cycle,upAdd,downSub,sum_c*i,lenEnd,speed,xwc,multipleX,multipleY);	
 	
 	}
 }
 ////////////////////////创建反向绿波带END////////////////////////
+
+
+////////////////////////创建分时速正向绿波带BEGIN////////////////////////
+//绿波带宽度（单条 小）		  绿波时长,   上偏移量,绿波周期,路口距离，绿波周期
+function createFLv(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){
+	//var time=(lenEnd*2)/(speed*1000/3600);								   MODIFY	 4
+	var time=(speedLen*2/multipleX)/(speed*1000/3600);
+	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
+	//for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){							MODIFY	 4
+	for(var i=0;i<(lv_cycle/multipleX-downSub/multipleX-upAdd/multipleX)*2;i++){
+		$('canvas').drawLine({
+			strokeStyle:'#7CFC00',
+			strokeWidth:1,
+			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
+			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
+			x1:80+(lenBegin/2/multipleY),y1:x_len  +common_len -(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2)/multipleX,   //ALTER 2
+									   //总长度-总周期-变量i-上偏移量-相位差
+			x2:80+(lenEnd/2/multipleY),y2:x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2)/multipleX    //ALTER 2
+									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
+		});
+	}
+}
+//绿波带条数(总 大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
+function createFGreen(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){
+	for(var i=0;i<(y_len/sum_c)*common_max;i++){   						//ALTER 2
+	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
+		createFLv(lv_cycle,upAdd,downSub,sum_c*i,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY);	
+	
+	}
+}
+////////////////////////创建分时速正向绿波带END////////////////////////
+
+
+////////////////////////创建分时反向绿波带BEGIN////////////////////////
+//创建反向绿波带 (单条绿波带)
+//绿波时长，路口距离，绿波周期
+function createFLv_R(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){//
+	//var time=(lenEnd*2)/(speed*1000/3600);								  MODIFY 4
+	var time=(speedLen*2/multipleX)/(speed*1000/3600);
+	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
+	//for(var i=0;i<(lv_cycle-upAdd-downSub)*2;i++){							 MODIFY 4
+	for(var i=0;i<(lv_cycle/multipleX-upAdd/multipleX-downSub/multipleX)*2;i++){
+				  //绿波周期-偏移量	
+		$('canvas').drawLine({
+			strokeStyle:'#00BFFF',
+			strokeWidth:1,
+			/*x1:(lenEnd/2)+80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,								 MODIFY 4	
+			x2:(lenEnd/2)+(lenEnd/2)-lenEnd+80,y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2*/
+			/*x1:(lenEnd/2)/multipleY+80,										 		y1:x_len  +common_len  -(sum_c*2)		-i-upAdd*2/multipleX-(xwc*2/multipleX), //ALTER 2
+			x2:(lenBegin/2)/multipleY+80+(lenBegin/2)/multipleY-lenBegin/multipleY, y2:x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2/multipleX)  //ALTER 2
+*/														//时间总距离-绿波待处理总长-
+			
+			x1:80+(lenEnd/2/multipleY),											y1:x_len  +common_len -(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2)/multipleX,   //ALTER 2
+									   //总长度-总周期-变量i-上偏移量-相位差
+			x2:80+(lenBegin/2/multipleY),												y2:x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2)/multipleX    //ALTER 2
+									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
+		});
+	}
+} 
+//绿波周期，向上偏移量，向下偏移量，周期，总路程，车速	（总条数）
+function createFGreen_R(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){	
+	for(var i=0;i<(y_len/sum_c)*common_max;i++){    //ALTER 2
+	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
+		createFLv_R(lv_cycle,upAdd,downSub,sum_c*i,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY);	
+	
+	}
+}
+////////////////////////创建分时反向绿波带END////////////////////////
