@@ -809,24 +809,56 @@ function computeR(){
 			continue;
 		}
 		beginLen=parseInt($("#road_"+i+"_1").val());
-		//上轴
 		road=parseInt(r1);
+		//上轴
+		var arryUp=new Array();//比较数组1_1  UP
 		var a1 = parseInt(r2)+parseInt(r3) + parseInt(road) / (parseInt(r4)*1000/3600);
+		for(var m=0;m<r2;m++){
+			arryUp.push(a1-m);
+		}
+		//数组二
 		//路口1 绿波时长+相位差+车速时间
-		var a2 = parseInt($("#road_"+(i-1)+"_2").val())+parseInt($("#road_"+(i-1)+"_3").val())
-		//路口2 绿波时长+相位差
-		var tempDown=a1<a2?0:a1-a2;
-		console.log("tempDown:"+tempDown);
+		var tempDown=0;
+		for(var j=0;j<y_len/common_cycle;j++){
+			var a2 = parseInt($("#road_"+(i-1)+"_2").val())+parseInt($("#road_"+(i-1)+"_3").val())   +  common_cycle*j;
+			var arryTemp=new Array();//比较数组1_2  UP
+			for(var n=0;n<parseInt($("#road_"+(i-1)+"_2").val());n++){
+				arryTemp.push(a2-n);
+			}
+			if(compareArray(arryUp,arryTemp)){
+				//路口2 绿波时长+相位差
+				tempDown=a1<a2?0:a1-a2;
+				console.log("tempDown:"+tempDown);
+				break;				
+			}
+		}
+		
 		////////////////////////////////////////////////////////////////////////////////////////
 		//下轴
-		//路口1 相位差+车速时间
+		var arryDown=new Array();//比较数组2_1  DOWN
 		var b1 = parseInt(r3) +  parseInt(road) / (parseInt(r4)*1000/3600);
+		//路口1 相位差+车速时间
+		for(var m=0;m<b1;m++){
+			arryDown.push(b1+m);
+		}
 		//路口2 相位差
-		var b2 = parseInt($("#road_"+(i-1)+"_3").val());
-		var tempUp=b1>b2?0:b2-b1;
-		console.log("tempDown:"+tempUp);
+		var tempUp=0;
+		for(var j=0;j<y_len/common_cycle;j++){
+			var b2 = parseInt($("#road_"+(i-1)+"_3").val())+  common_cycle*j;
+			//var a2 = parseInt($("#road_"+(i-1)+"_2").val())+parseInt($("#road_"+(i-1)+"_3").val())   +  common_cycle*j;
+			var arryTemp=new Array();//比较数组1_2  UP
+			for(var n=0;n<parseInt($("#road_"+(i-1)+"_2").val());n++){
+				arryTemp.push(b2+n);
+			}
+			if(compareArray(arryDown,arryTemp)){
+				//路口2 绿波时长+相位差
+				tempUp=b1>b2?0:b2-b1;
+				console.log("tempUp:"+tempUp);
+				break;				
+			}
+		}
+		
 		createFGreen_R(r2,tempUp,tempDown,common_cycle,roadLen-beginLen,roadLen,parseInt(r4),parseInt(r1),parseInt(r3),multipleX,multipleY);
-		//																										           车速		  相位差 			
 		roadLen=roadLen-beginLen;
 	}
 	//清除，重建 begin//

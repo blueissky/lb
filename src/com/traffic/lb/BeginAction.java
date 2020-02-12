@@ -47,13 +47,14 @@ public class BeginAction extends HttpServlet {
 		StringBuffer roadPanel=new StringBuffer();
 		for(int i=1;i<=Integer.parseInt(p4);i++) {
 			roadPanel.append("<label>路口"+i+"</label>");
-			roadPanel.append("<label>长度</label> <input id=\"road_"+i+"_1\" type=\"text\" ");
-			roadPanel.append("<label>绿波时长</label> <input id=\"road_"+i+"_2\" type=\"text\" ");
-			roadPanel.append("<label>相位差</label> <input id=\"road_"+i+"_3\" type=\"text\" ");
-			roadPanel.append("<label>"+(i-1)+"-"+i+" 车速</label> <input id=\"road_"+i+"_4\" type=\"text\" <br><br>");
+			roadPanel.append("<label>&nbsp;("+(i-1)+"->"+i+")长度</label> <input id=\"road_"+i+"_1\" type=\"text\" >");
+			roadPanel.append("<label>绿波时长</label> <input id=\"road_"+i+"_2\" type=\"text\" >");
+			roadPanel.append("<label>相位差</label> <input id=\"road_"+i+"_3\" type=\"text\" value=\"0\">");
+			roadPanel.append("<label>"+(i-1)+"->"+i+" 正向车速</label> <input id=\"road_"+i+"_4\" type=\"text\" value=\"0\">");
+			roadPanel.append("<label>"+(i+1)+"->"+i+" 反向车速</label> <input id=\"road_"+i+"_5\" type=\"text\" value=\"0\"><br>");
 		}
 		request.setAttribute("roadPanel", roadPanel.toString());
-		request.getRequestDispatcher("/lb/NewFile.jsp").forward(request,response);
+		request.getRequestDispatcher("/lb/NewFile2.jsp").forward(request,response);
 		doGet(request, response);
 	}
 

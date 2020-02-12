@@ -1,9 +1,24 @@
+
+//两个数值是否存在交集比较
+function compareArray(arry1,arry2){
+		//对比判断交集	
+		for(var j=0;j<arry1.length;j++){
+			for(var k=0;k<arry2.length;k++){
+				if(arry1[j]==arry2[k]){
+					console.log(arry1[j]);
+					return true;
+				}			
+			}
+		}
+		return false;
+}
+
 //生成绿波向下延伸 400 修改ALTER 对应的值
-var common_len=400;
-var common_max=2;
+//var common_len=400;
+//var common_max=2;
 //测试归零相位状态
-//var common_len=0;
-//var common_max=1;
+var common_len=0;
+var common_max=1;
 /////////////创建文本/////////////// roadLen/2+80
 function roadName(name,locX,multipleY){
 	$myCanvas.drawText({
@@ -134,6 +149,57 @@ function createLoc(x_len,road_len,sum_c,green_len,xwc,multipleX,multipleY){
 	}
 	//////////////////////////////绿波轴///////////////////////////////////
 }
+
+//X轴长度,路口位置,  总周期,绿波时长,   相位差
+function createLocAlter(x_len,road_len,sum_c,green_len,xwc,multipleX,multipleY){
+	//////////////////////////////绿波轴///////////////////////////////////
+	/*STEP 3 变量*/
+	//路口A位置 80 为0起始
+	//var road_len=800;
+	//var road_loc=80+(road_len/2);								MODIFY 4
+	var road_loc=80+((road_len/2) / multipleY);
+	/*STEP 3 变量*/
+	
+	$myCanvas.drawLine({
+		strokeStyle:'RED',
+		strokeWidth:1,
+		x1:road_loc,y1:0,
+		x2:road_loc,y2:x_len
+	});
+	
+	/*STEP 4 变量*/
+	//周期(秒)
+	//var sum_c=40;
+	//绿波时长(秒)
+	//var green_len=30;
+	//相位差
+	//var xwc=40;
+	/*STEP 4 变量*/
+	
+	var cycle=x_len/(sum_c*2)*common_max;								//ALTER 2
+	//var region=(50*2)-40;//非绿波时间
+	//var r_y1=x_len-(green_len*2);//2为固定值						MODIFY 4
+	var r_y1=x_len-(green_len*2/multipleX);//2为固定值
+	var r_y2=x_len;
+	
+	var arrySum=new Array();
+	for(var i=0;i<cycle;i++){
+		$myCanvas.drawLine({
+			strokeStyle:'#228B22',
+			strokeWidth:10,
+			/*x1:road_loc,y1:r_y1 - (sum_c*2)*i-(xwc*2) ,		MODIFY 4
+			x2:road_loc,y2:r_y2 - (sum_c*2)*i-(xwc*2)*/
+			x1:road_loc,y1:r_y1+common_len - (sum_c*2)*i-(xwc*2)/multipleX ,  //ALTER 2
+			x2:road_loc,y2:r_y2+common_len - (sum_c*2)*i-(xwc*2)/multipleX    //ALTER 2
+		});
+		var y1=r_y1+common_len - (sum_c*2)*i-(xwc*2)/multipleX;
+		var y2=r_y2+common_len - (sum_c*2)*i-(xwc*2)/multipleX;
+		arrySum.push(y1+"*"+y2);
+	}
+	return arrySum;
+	//////////////////////////////绿波轴///////////////////////////////////
+}
+
 //根据路程,车速计算相位差
 function xwc_sl(lenEnd,speed){
 	var time_xwc=lenEnd/(speed*1000/3600);
@@ -268,3 +334,37 @@ function createFGreen_R(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speed
 	}
 }
 ////////////////////////创建分时反向绿波带END////////////////////////
+
+
+////////////////////////创建分时速正向绿波带BEGIN////////////////////////
+//绿波带宽度（单条 小）		  绿波时长,   上偏移量,绿波周期,路口距离，绿波周期
+function createFLvAdd(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){
+	//var time=(lenEnd*2)/(speed*1000/3600);								   MODIFY	 4
+	var time=(speedLen*2/multipleX)/(speed*1000/3600);
+	//time=time*2;//X轴偏移量修正，20像素 实际 40像素
+	//for(var i=0;i<(lv_cycle-downSub-upAdd)*2;i++){							MODIFY	 4
+	for(var i=0;i<(lv_cycle/multipleX-downSub/multipleX-upAdd/multipleX)*2;i++){
+		$('canvas').drawLine({
+			strokeStyle:'#7CFC00',
+			strokeWidth:1,
+			//x1:80,y1:x_len-(sum_c*2)-i-upAdd*2-xwc*2,
+			//x2:80+(lenEnd/2),y2:x_len-(sum_c*2)-time-i-upAdd*2-xwc*2,        MODIFY   4
+			x1:80+(lenBegin/2/multipleY),y1:x_len  +common_len -(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2)/multipleX,   //ALTER 2
+									   //总长度-总周期-变量i-上偏移量-相位差
+			x2:80+(lenEnd/2/multipleY),y2:x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2)/multipleX    //ALTER 2
+									   //总长度-总周期-车速时间-变量i-上偏移量-相位差
+		});
+		var y1=x_len  +common_len -(sum_c*2)	  -i-upAdd*2/multipleX-(xwc*2)/multipleX;
+		var y2=x_len  +common_len -(sum_c*2)-time-i-upAdd*2/multipleX-(xwc*2)/multipleX ;
+		console.log(y1+"*"+y2);
+	}
+}
+//绿波带条数(总 大)			  绿波周期,向上偏移量,向下偏移量,总周期,总路程,  车速
+function createFGreenAdd(lv_cycle,upAdd,downSub,sum_c,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY){
+	for(var i=0;i<(y_len/sum_c)*common_max;i++){   						//ALTER 2
+	//	createLv(lv_cycle1,road_loc1,sum_c2*i);	
+		createFLvAdd(lv_cycle,upAdd,downSub,sum_c*i,lenBegin,lenEnd,speed,speedLen,xwc,multipleX,multipleY);	
+	
+	}
+}
+////////////////////////创建分时速正向绿波带END////////////////////////
