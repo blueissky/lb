@@ -14,11 +14,11 @@ function compareArray(arry1,arry2){
 }
 
 //生成绿波向下延伸 400 修改ALTER 对应的值
-//var common_len=400;
-//var common_max=2;
+var common_len=400;
+var common_max=2;
 //测试归零相位状态
-var common_len=0;
-var common_max=1;
+//var common_len=0;
+//var common_max=1;
 /////////////创建文本/////////////// roadLen/2+80
 function roadName(name,locX,multipleY){
 	$myCanvas.drawText({

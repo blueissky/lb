@@ -394,13 +394,18 @@ function autoZ(){
 
 		begin+=parseInt($("#road_"+i+"_1").val());
 		var Len=parseInt($("#road_"+(i+1)+"_1").val());
-		for(var n=0;n<arryFirst.length;n++){
+		for(var n=0;n<arry1[i-1].length;n++){
 			//判断交集
 			/* console.log(arry1[i].indexOf(arry1Add[i-1][n]));  
 			var flag=arry1[i].indexOf(arry1Add[i-1][n]);
 			if(flag==-1){//找不到交点
 				continue;
 			} */
+			var y1=arry1[i-1][n];
+			var y2=arry1Add[i-1][n];
+			console.log(i-1+"-"+n);
+			console.log(y1+"-"+y2);
+			
 			$('canvas').drawLine({
 				strokeStyle:'#7CFC00',
 				strokeWidth:1,
@@ -619,7 +624,7 @@ function autoZclear(){
 
 		begin+=parseInt($("#road_"+i+"_1").val());
 		var Len=parseInt($("#road_"+(i+1)+"_1").val());
-		for(var n=0;n<arryFirst.length;n++){
+		for(var n=0;n<arry1[i-1].length;n++){
 			
 			//判断交集
 			console.log(arry1[i].indexOf(arry1Add[i-1][n]));  
